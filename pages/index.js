@@ -2,7 +2,6 @@ import { Box, Button, Text, TextField, Image } from '@skynexui/components'
 import appConfig from '../config.json'
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
-import { route } from 'next/dist/server/router'
 
 function Titulo(props) {
   const Tag = props.tag || 'h1'
@@ -62,7 +61,7 @@ export default function PaginaInicial() {
             as="form"
             onSubmit={info => {
               info.preventDefault()
-              router.push('/chat')
+              router.push(`/chat?username=${username}`)
             }}
             styleSheet={{
               display: 'flex',
