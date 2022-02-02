@@ -29,11 +29,12 @@ function GlobalStyle() {
   )
 }
 
-export default function MyApp({ Component, pagesProps }) {
+export default function CustomApp({ Component, pageProps }) {
+  console.log('Roda em todas as páginas!')
   return (
     <>
       <GlobalStyle />
-      <Component {...pagesProps} />
+      <Component {...pageProps} />
     </>
   )
 }

@@ -2,66 +2,52 @@ import { Box, Text, TextField, Image, Button } from '@skynexui/components'
 import React, { useEffect } from 'react'
 import { useState } from 'react/cjs/react.development'
 import appConfig from '../config.json'
-import { useRouter } from 'next/router'
 import { createClient } from '@supabase/supabase-js'
 import { ButtonSendSticker } from '../src/components/ButtonSendSticker'
+import { useRouter } from 'next/router'
 
+// Como fazer AJAX: https://medium.com/@omariosouto/entendendo-como-fazer-ajax-com-a-fetchapi-977ff20da3c6
 const SUPABASE_ANON_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzU4NDc3MiwiZXhwIjoxOTU5MTYwNzcyfQ.-ToezcAXEx4YDLsHuHpNRWGtbPbwkdFDRwEoUlYMAP4'
-
 const SUPABASE_URL = 'https://ajnpuhovrufywnfqcwaj.supabase.co'
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
-function getMessages(addMessage) {
-  return supabaseClient
-    .from('mensagens')
-    .on('INSERT', resp => {
-      addMessage(resp.new)
-    })
-    .subscribe()
-}
-
 export default function ChatPage() {
-  const router = useRouter()
-  const usuarioLogado = router.query.username
-  const [mensagem, setMensagem] = useState('')
-  const [listaDeMensagens, setListaDeMensagens] = useState([])
+  const [mensagem, setMensagem] = React.useState('')
+  const [listaDeMensagens, setListaDeMensagens] = React.useState([])
 
-  useEffect(() => {
+  React.useEffect(() => {
     supabaseClient
       .from('mensagens')
       .select('*')
       .order('id', { ascending: false })
       .then(({ data }) => {
+        console.log('Dados da consulta:', data)
         setListaDeMensagens(data)
       })
-    const subscription = getMessages(novaMensagem => {
-      setListaDeMensagens(valorAtualDaLista => {
-        return [novaMensagem, ...valorAtualDaLista]
-      })
-    })
-    return () => {
-      subscription.unsubscribe()
-    }
   }, [])
 
   function handleNovaMensagem(novaMensagem) {
     const mensagem = {
-      // id: listaDeMensagens.length,
-      de: usuarioLogado,
+      // id: listaDeMensagens.length + 1,
+      de: 'vanessametonini',
       texto: novaMensagem
     }
 
     supabaseClient
       .from('mensagens')
-      .insert([mensagem])
+      .insert([
+        // Tem que ser um objeto com os MESMOS CAMPOS que você escreveu no supabase
+        mensagem
+      ])
       .then(({ data }) => {
-        console.log(data)
+        console.log('Criando mensagem: ', data)
+        setListaDeMensagens([data[0], ...listaDeMensagens])
       })
 
     setMensagem('')
   }
-  // ./Sua lógica vai aqui
+
   return (
     <Box
       styleSheet={{
@@ -104,14 +90,13 @@ export default function ChatPage() {
           }}
         >
           <MessageList mensagens={listaDeMensagens} />
-          {/* {listaDeMensagens.map(mensagemAtual => {
-            return (
-              <li key={mensagemAtual.id}>
-                {mensagemAtual.de}:{mensagemAtual.texto}
-              </li>
-            )
-          })} */}
-
+          {/* {listaDeMensagens.map((mensagemAtual) => {
+                        return (
+                            <li key={mensagemAtual.id}>
+                                {mensagemAtual.de}: {mensagemAtual.texto}
+                            </li>
+                        )
+                    })} */}
           <Box
             as="form"
             styleSheet={{
@@ -121,8 +106,9 @@ export default function ChatPage() {
           >
             <TextField
               value={mensagem}
-              onChange={e => {
-                setMensagem(e.target.value)
+              onChange={event => {
+                const valor = event.target.value
+                setMensagem(valor)
               }}
               onKeyPress={event => {
                 if (event.key === 'Enter') {
@@ -180,6 +166,7 @@ function Header() {
 }
 
 function MessageList(props) {
+  console.log(props)
   return (
     <Box
       tag="ul"
