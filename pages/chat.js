@@ -13,10 +13,10 @@ const SUPABASE_URL = 'https://ajnpuhovrufywnfqcwaj.supabase.co'
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 export default function ChatPage() {
-  const [mensagem, setMensagem] = React.useState('')
-  const [listaDeMensagens, setListaDeMensagens] = React.useState([])
+  const [mensagem, setMensagem] = useState('')
+  const [listaDeMensagens, setListaDeMensagens] = useState([])
 
-  React.useEffect(() => {
+  useEffect(() => {
     supabaseClient
       .from('mensagens')
       .select('*')
@@ -30,7 +30,7 @@ export default function ChatPage() {
   function handleNovaMensagem(novaMensagem) {
     const mensagem = {
       // id: listaDeMensagens.length + 1,
-      de: 'vanessametonini',
+      de: 'EnzoNoda',
       texto: novaMensagem
     }
 
