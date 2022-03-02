@@ -30,7 +30,7 @@ export default function ChatPage() {
   function handleNovaMensagem(novaMensagem) {
     const mensagem = {
       // id: listaDeMensagens.length + 1,
-      de: 'vanessametonini',
+      de: 'EnzoNoda',
       texto: novaMensagem
     }
 
